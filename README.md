@@ -104,12 +104,26 @@ Whatever you output from Astro: **WebP, AVIF, JPEG, PNG** (via `aeo-image`). SVG
 
 ## Verifying it worked
 
-```bash
-npx astro build
-exiftool dist/_astro/<your-image>.webp | grep -iE "description|alt"
-# or:
-node -e "import('aeo-image').then(async m=>{const {readFileSync}=await import('node:fs');console.log(m.readMetadata(new Uint8Array(readFileSync(process.argv[1]))))})" dist/_astro/<your-image>.webp
+Given `<Image alt="A weathered red barn under a violet dusk sky in rural Vermont" />`, the built file gains embedded metadata:
+
+```console
+$ exiftool dist/_astro/barn.abc123.webp | grep -iE "description|alt"
+# ── before (default Astro service) ──
+#   (no metadata)
+
+# ── after (astro-aeo-image) ──
+Description                     : A weathered red barn under a violet dusk sky in rural Vermont
+Alt Text Accessibility          : A weathered red barn under a violet dusk sky in rural Vermont
 ```
+
+Or check it programmatically:
+
+```bash
+node -e "import('aeo-image').then(async m=>{const {readFileSync}=await import('node:fs');console.log(m.readMetadata(new Uint8Array(readFileSync(process.argv[1]))))})" dist/_astro/<your-image>.webp
+# → { description: '…', altText: '…' }
+```
+
+The pixels are untouched — only a metadata block is added.
 
 ## Status & scope
 

@@ -1,6 +1,6 @@
 {
   "name": "astro-aeo-image",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Astro image service that embeds your <Image> alt text (and optional description/keywords) as standards XMP into the optimized output files — so your dist/_astro assets are self-describing for Google Images and AI answer engines. Wraps Astro's default sharp service; byte-preserving metadata layer via aeo-image.",
   "type": "module",
   "main": "./dist/index.js",
