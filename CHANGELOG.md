@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.2] - 2026-06-01
+
+### Changed
+- Docs accuracy: reframed claims to what's spec-backed. Google Images reads &
+  recommends embedding IPTC metadata (cited); HTML `alt` drives ranking, so
+  embedding complements it (durability/accessibility/attribution); AI-engine
+  consumption is forward-looking. Removed the internal outreach notes from the repo.
+
+
 ## [0.2.1] - 2026-06-01
 
 ### Changed

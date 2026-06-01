@@ -1,11 +1,13 @@
 # astro-aeo-image
 
-> An Astro image service that embeds your `<Image>` **alt text** (and optional description/keywords) as standards **XMP** directly into the optimized output files — so your `dist/_astro` assets are self-describing for **Google Images** and **AI answer engines** (ChatGPT, Perplexity, Google AI Overviews).
+> An Astro image service that embeds your `<Image>` **alt text** (and optional description/keywords/license) as standards **XMP/IPTC** directly into the optimized output files — so your `dist/_astro` assets are **self-describing**: [Google Images reads embedded IPTC metadata and recommends embedding it](https://developers.google.com/search/docs/appearance/structured-data/image-license-metadata), and the description travels with the file for accessibility, attribution, and the AI-search era.
 
 [![npm](https://img.shields.io/npm/v/astro-aeo-image.svg)](https://www.npmjs.com/package/astro-aeo-image)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
-Astro **already requires** an `alt` on every `<Image />` — but that text normally lives only in the HTML attribute. The moment the page is screenshotted, hot-linked, indexed by Google Images, or ingested by an AI crawler as a *file*, the description is gone. `astro-aeo-image` writes it **into the image bytes**, where it travels with the file.
+Astro **already requires** an `alt` on every `<Image />` — but that text normally lives only in the HTML attribute. The moment the optimized file is downloaded, hot-linked, or indexed *as a file*, the page context is gone. `astro-aeo-image` writes the description (and attribution/license) **into the image bytes**, where it travels with the file.
+
+> **What's documented:** [Google Images reads embedded IPTC metadata](https://developers.google.com/search/docs/appearance/structured-data/image-license-metadata) (creator/credit/copyright/license) and **recommends embedding it**. For image *ranking*, Google uses the [HTML `alt`](https://developers.google.com/search/docs/appearance/google-images) — so embedding **complements** it (durability, accessibility, attribution), it doesn't replace it or claim a ranking boost. AI engines consuming embedded metadata is forward-looking, not yet a spec.
 
 ## How it's different from `image.service.config.keepMetadata`
 
