@@ -143,6 +143,10 @@ declare namespace Astro {
 
 Whatever you output from Astro: **WebP, AVIF, JPEG, PNG** (via `aeo-image`). SVG/GIF and any format `aeo-image` doesn't handle are passed through untouched — the service degrades gracefully and **never fails a build over metadata**.
 
+## Standards
+
+Metadata is written as **Adobe XMP** (not legacy IPTC-IIM), conforming to the [IPTC Photo Metadata Standard 2025.1](https://iptc.org/standards/photo-metadata/iptc-standard/) (descriptive + accessibility + rights/licensing subset) plus Dublin Core, Adobe, and PLUS namespaces — see [`aeo-image`'s conformance notes](https://github.com/vsima/aeo-image#standards--conformance). The 2025.1 AI-generation provenance properties are not yet implemented.
+
 ## Verifying it worked
 
 Given `<Image alt="A weathered red barn under a violet dusk sky in rural Vermont" />`, the built file gains embedded metadata:

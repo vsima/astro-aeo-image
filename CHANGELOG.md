@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1] - 2026-06-01
+
+### Added
+- README "Standards" section: Adobe XMP, IPTC Photo Metadata Standard 2025.1
+  (descriptive/accessibility/rights subset) + DC/Adobe/PLUS; links aeo-image's
+  conformance notes. Docs only.
+
+
 ## [0.3.0] - 2026-06-01
 
 ### Added
