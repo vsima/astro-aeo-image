@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.0] - 2026-06-01
+
+### Added
+- Pass-through for attribution + **Google Licensable** props on `<Image>`:
+  `creator`, `credit`, `rights`, `copyrightNotice`, `licenseUrl`
+  (`xmpRights:WebStatement`), and `licensor` (IPTC PLUS `plus:Licensor`; accepts
+  object `{url, name}` or flat `licensorUrl`/`licensorName`). Requires aeo-image ^1.1.0.
+
+
 ## [0.2.2] - 2026-06-01
 
 ### Changed

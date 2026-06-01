@@ -29,6 +29,22 @@ export interface DescriptiveProps {
   keywords?: unknown;
   /** Optional custom prop: title. */
   title?: unknown;
+  /** Optional: author/creator. → dc:creator */
+  creator?: unknown;
+  /** Optional: credit line. → photoshop:Credit */
+  credit?: unknown;
+  /** Optional: rights statement. → dc:rights */
+  rights?: unknown;
+  /** Optional: copyright notice. → photoshop:Copyright */
+  copyrightNotice?: unknown;
+  /** Optional: license/usage-terms URL (Google Licensable). → xmpRights:WebStatement */
+  licenseUrl?: unknown;
+  /** Optional: where to acquire a license — object form. → IPTC PLUS plus:Licensor */
+  licensor?: { url?: unknown; name?: unknown } | unknown;
+  /** Optional: flat alternative to `licensor` for ergonomic markup. */
+  licensorUrl?: unknown;
+  /** Optional: flat alternative to `licensor.name`. */
+  licensorName?: unknown;
 }
 
 function str(v: unknown): string | undefined {
@@ -62,6 +78,28 @@ export function metadataFromProps(
   if (title) meta.title = title;
   const keywords = keywordList(props.keywords);
   if (keywords) meta.keywords = keywords;
+
+  // Attribution + rights.
+  const creator = str(props.creator);
+  if (creator) meta.creator = creator;
+  const credit = str(props.credit);
+  if (credit) meta.credit = credit;
+  const rights = str(props.rights);
+  if (rights) meta.rights = rights;
+  const copyrightNotice = str(props.copyrightNotice);
+  if (copyrightNotice) meta.copyrightNotice = copyrightNotice;
+
+  // Google Licensable fields.
+  const licenseUrl = str(props.licenseUrl);
+  if (licenseUrl) meta.licenseUrl = licenseUrl;
+
+  // licensor: accept object {url,name} or flat licensorUrl/licensorName props.
+  const licensorObj = (props.licensor ?? {}) as { url?: unknown; name?: unknown };
+  const licensorUrl = str(props.licensorUrl) ?? str(licensorObj.url);
+  if (licensorUrl) {
+    const licensorName = str(props.licensorName) ?? str(licensorObj.name);
+    meta.licensor = licensorName ? { url: licensorUrl, name: licensorName } : { url: licensorUrl };
+  }
 
   return Object.keys(meta).length > 0 ? meta : null;
 }

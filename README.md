@@ -104,6 +104,28 @@ Pass extra props on `<Image>` for fuller AEO signals (distinct SEO description, 
 | `description` | `dc:description` |
 | `keywords` (array or comma string) | `dc:subject` |
 | `title` | `dc:title` |
+| `creator` | `dc:creator` |
+| `credit` | `photoshop:Credit` |
+| `rights` | `dc:rights` |
+| `copyrightNotice` | `photoshop:Copyright` |
+| `licenseUrl` | `xmpRights:WebStatement` — *Google Licensable* |
+| `licensor` `{url, name?}` (or flat `licensorUrl`/`licensorName`) | IPTC PLUS `plus:Licensor` — *Google "Get this image" link* |
+
+### Make images Licensable in Google
+
+The last fields implement what [Google Images reads for the **Licensable** badge](https://developers.google.com/search/docs/appearance/structured-data/image-license-metadata):
+
+```astro
+<Image
+  src={barn}
+  alt="A weathered red barn at dusk"
+  creator="Jane Doe"
+  copyrightNotice="© 2026 Example Studio"
+  licenseUrl="https://example.com/license/barn"
+  licensorUrl="https://example.com/buy/barn"
+  width={1200} height={800}
+/>
+```
 
 For TypeScript autocomplete on the custom props, augment Astro's image props in `src/env.d.ts`:
 

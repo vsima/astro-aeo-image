@@ -85,3 +85,41 @@ test("re-embedding replaces, doesn't duplicate", () => {
   const twice = embedMetadata(once, { alt: "second" });
   assert.equal(readMetadata(twice).altText, "second");
 });
+
+// ---- Google Licensable fields pass-through ----
+
+test("maps attribution + licensing props (object licensor form)", () => {
+  const m = metadataFromProps({
+    alt: "Licensable barn",
+    creator: "Jane Doe",
+    credit: "Example Studio",
+    copyrightNotice: "© 2026 Example Studio",
+    licenseUrl: "https://example.com/license/1",
+    licensor: { url: "https://example.com/buy/1", name: "Example Stock" },
+  });
+  assert.equal(m?.creator, "Jane Doe");
+  assert.equal(m?.credit, "Example Studio");
+  assert.equal(m?.copyrightNotice, "© 2026 Example Studio");
+  assert.equal(m?.licenseUrl, "https://example.com/license/1");
+  assert.deepEqual(m?.licensor, { url: "https://example.com/buy/1", name: "Example Stock" });
+});
+
+test("supports flat licensorUrl/licensorName props for ergonomic markup", () => {
+  const m = metadataFromProps({
+    alt: "x",
+    licensorUrl: "https://example.com/buy/2",
+    licensorName: "Flat Stock",
+  });
+  assert.deepEqual(m?.licensor, { url: "https://example.com/buy/2", name: "Flat Stock" });
+});
+
+test("PNG: Licensable fields embed and read back via aeo-image", () => {
+  const out = embedMetadata(PNG, {
+    alt: "barn",
+    licenseUrl: "https://example.com/license/3",
+    licensorUrl: "https://example.com/buy/3",
+  });
+  const r = readMetadata(out);
+  assert.equal(r.licenseUrl, "https://example.com/license/3");
+  assert.deepEqual(r.licensor, { url: "https://example.com/buy/3" });
+});
