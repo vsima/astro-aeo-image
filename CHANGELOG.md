@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2] - 2026-06-01
+
+### Changed
+- Removed the inaccurate `astro-integration` npm keyword. This package is an
+  Astro **image service** (configured via `image.service.entrypoint`), not an
+  Astro Integration (the `integrations: []` hooks API). Kept `astro-image-service`.
+
+
 ## [0.1.1] - 2026-06-01
 
 ### Added
