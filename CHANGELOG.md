@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1] - 2026-06-01
+
+### Changed
+- Re-added the `astro-integration` keyword (plus `withastro`). Now accurate as
+  of v0.2.0, which ships a real Astro integration — required for the
+  astro.build/integrations catalog. Added OUTREACH.md (Discord + catalog plan).
+
+
 ## [0.2.0] - 2026-06-01
 
 ### Added
