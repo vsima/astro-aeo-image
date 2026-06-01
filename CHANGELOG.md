@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.2.0] - 2026-06-01
+
+### Added
+- **Astro Integration API** — the package's default export is now an integration,
+  so setup is one line: `integrations: [aeoImage()]`. This is the recommended
+  usage and makes the package discoverable as a true Astro integration.
+- `astro-aeo-image/service` export — the image service is still available
+  directly for advanced setups (`image.service.entrypoint`).
+
+### Changed
+- **Breaking (pre-1.0):** the default export changed from the image service to
+  the integration. If you previously used
+  `image: { service: { entrypoint: "astro-aeo-image" } }`, switch to either
+  `integrations: [aeoImage()]` or `entrypoint: "astro-aeo-image/service"`.
+
+
 ## [0.1.2] - 2026-06-01
 
 ### Changed

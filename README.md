@@ -33,6 +33,23 @@ npm install astro-aeo-image
 
 ## Configure
 
+Add the integration — one line:
+
+```js
+// astro.config.mjs
+import { defineConfig } from "astro/config";
+import aeoImage from "astro-aeo-image";
+
+export default defineConfig({
+  integrations: [
+    aeoImage(), // or aeoImage({ useAltAsDescription: false })
+  ],
+});
+```
+
+<details>
+<summary>Advanced: use the image service directly (without the integration)</summary>
+
 ```js
 // astro.config.mjs
 import { defineConfig } from "astro/config";
@@ -40,15 +57,15 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   image: {
     service: {
-      entrypoint: "astro-aeo-image",
-      // optional:
-      config: {
-        useAltAsDescription: true, // also write alt → dc:description (default true)
-      },
+      entrypoint: "astro-aeo-image/service",
+      config: { useAltAsDescription: true },
     },
   },
 });
 ```
+
+The integration is just a thin wrapper that sets this for you and forwards options.
+</details>
 
 That's it. Every `<Image />` you already have now ships its `alt` inside the file:
 
