@@ -15,3 +15,5 @@ export { default } from "./integration.ts";
 export { default as imageService } from "./service.ts";
 export type { AeoImageOptions, DescriptiveProps } from "./embed.ts";
 export { embedMetadata, metadataFromProps } from "./embed.ts";
+// Re-exported so Astro users can set digitalSourceType without importing aeo-image.
+export { DIGITAL_SOURCE_TYPE } from "aeo-image";

@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.4.0] - 2026-06-11
+
+### Added
+- Pass-through for **IPTC 2025.1 AI-generation provenance** props on `<Image>`:
+  `ai` object (or flat `aiPrompt`/`aiPromptWriter`/`aiSystem`/`aiSystemVersion`)
+  and `digitalSourceType` (`Iptc4xmpExt:DigitalSourceType`; accepts a full IRI
+  or a bare CV term like `"trainedAlgorithmicMedia"`). New `aiGenerated`
+  boolean shorthand sets trainedAlgorithmicMedia. Re-exports
+  `DIGITAL_SOURCE_TYPE` from aeo-image. Requires aeo-image ^1.2.0.
+
+### Fixed
+- `propertiesToHash` now includes the attribution/licensing props from v0.3.0
+  and the new AI props, so they survive into `transform()` on the
+  on-demand/SSR image path (previously only alt/description/keywords/title
+  were hashed).
+
+
 ## [0.3.1] - 2026-06-01
 
 ### Added

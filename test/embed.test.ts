@@ -123,3 +123,76 @@ test("PNG: Licensable fields embed and read back via aeo-image", () => {
   assert.equal(r.licenseUrl, "https://example.com/license/3");
   assert.deepEqual(r.licensor, { url: "https://example.com/buy/3" });
 });
+
+// ---- IPTC 2025.1 AI provenance pass-through ----
+
+test("maps AI provenance props (object ai form)", () => {
+  const m = metadataFromProps({
+    alt: "AI market scene",
+    ai: {
+      prompt: "neon street market, rain reflections",
+      promptWriter: "Jane Doe",
+      system: "DALL-E via Bing Image Creator",
+      systemVersion: "3",
+    },
+  });
+  assert.deepEqual(m?.ai, {
+    prompt: "neon street market, rain reflections",
+    promptWriter: "Jane Doe",
+    system: "DALL-E via Bing Image Creator",
+    systemVersion: "3",
+  });
+});
+
+test("supports flat aiPrompt/aiSystem/etc props for ergonomic markup", () => {
+  const m = metadataFromProps({
+    alt: "x",
+    aiPrompt: "a red barn, watercolor",
+    aiSystem: "Google Gemini",
+  });
+  assert.deepEqual(m?.ai, { prompt: "a red barn, watercolor", system: "Google Gemini" });
+});
+
+test("digitalSourceType accepts a full IRI or a bare CV term", () => {
+  const iri = "http://cv.iptc.org/newscodes/digitalsourcetype/compositeSynthetic";
+  assert.equal(metadataFromProps({ alt: "x", digitalSourceType: iri })?.digitalSourceType, iri);
+  assert.equal(
+    metadataFromProps({ alt: "x", digitalSourceType: "trainedAlgorithmicMedia" })
+      ?.digitalSourceType,
+    "http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia",
+  );
+});
+
+test("aiGenerated shorthand sets trainedAlgorithmicMedia", () => {
+  assert.equal(
+    metadataFromProps({ alt: "x", aiGenerated: true })?.digitalSourceType,
+    "http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia",
+  );
+  // Explicit digitalSourceType wins over the shorthand.
+  assert.equal(
+    metadataFromProps({ alt: "x", aiGenerated: true, digitalSourceType: "compositeSynthetic" })
+      ?.digitalSourceType,
+    "http://cv.iptc.org/newscodes/digitalsourcetype/compositeSynthetic",
+  );
+});
+
+test("WebP: AI provenance embeds and reads back via aeo-image", () => {
+  const out = embedMetadata(WEBP, {
+    alt: "AI scene",
+    aiGenerated: true,
+    aiPrompt: "neon market",
+    aiSystem: "TestGen",
+    aiSystemVersion: "2",
+  });
+  const r = readMetadata(out);
+  assert.equal(
+    r.digitalSourceType,
+    "http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia",
+  );
+  assert.deepEqual(r.ai, { prompt: "neon market", system: "TestGen", systemVersion: "2" });
+});
+
+test("no AI props → no ai/digitalSourceType in metadata", () => {
+  const m = metadataFromProps({ alt: "plain" });
+  assert.ok(m && !("ai" in m) && !("digitalSourceType" in m));
+});

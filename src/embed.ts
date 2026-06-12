@@ -1,4 +1,9 @@
-import { writeMetadata, detectFormat, type ImageMetadata } from "aeo-image";
+import {
+  writeMetadata,
+  detectFormat,
+  DIGITAL_SOURCE_TYPE,
+  type ImageMetadata,
+} from "aeo-image";
 
 /**
  * The pure, framework-agnostic core: given an encoded image buffer and the
@@ -45,6 +50,28 @@ export interface DescriptiveProps {
   licensorUrl?: unknown;
   /** Optional: flat alternative to `licensor.name`. */
   licensorName?: unknown;
+  /**
+   * Optional: IPTC Digital Source Type. Accepts a full IRI or a bare CV term
+   * (e.g. "trainedAlgorithmicMedia"). → Iptc4xmpExt:DigitalSourceType
+   */
+  digitalSourceType?: unknown;
+  /**
+   * Optional shorthand: `<Image aiGenerated ... />` sets digitalSourceType to
+   * trainedAlgorithmicMedia (unless digitalSourceType is given explicitly).
+   */
+  aiGenerated?: unknown;
+  /** Optional: AI-generation provenance (IPTC 2025.1) — object form. */
+  ai?:
+    | { prompt?: unknown; promptWriter?: unknown; system?: unknown; systemVersion?: unknown }
+    | unknown;
+  /** Optional: flat alternative to `ai.prompt`. → Iptc4xmpExt:AIPromptInformation */
+  aiPrompt?: unknown;
+  /** Optional: flat alternative to `ai.promptWriter`. → Iptc4xmpExt:AIPromptWriterName */
+  aiPromptWriter?: unknown;
+  /** Optional: flat alternative to `ai.system`. → Iptc4xmpExt:AISystemUsed */
+  aiSystem?: unknown;
+  /** Optional: flat alternative to `ai.systemVersion`. → Iptc4xmpExt:AISystemVersionUsed */
+  aiSystemVersion?: unknown;
 }
 
 function str(v: unknown): string | undefined {
@@ -99,6 +126,35 @@ export function metadataFromProps(
   if (licensorUrl) {
     const licensorName = str(props.licensorName) ?? str(licensorObj.name);
     meta.licensor = licensorName ? { url: licensorUrl, name: licensorName } : { url: licensorUrl };
+  }
+
+  // AI-generation provenance (IPTC 2025.1): object `ai` or flat ai* props.
+  const aiObj = (props.ai ?? {}) as {
+    prompt?: unknown;
+    promptWriter?: unknown;
+    system?: unknown;
+    systemVersion?: unknown;
+  };
+  const ai: NonNullable<ImageMetadata["ai"]> = {};
+  const aiPrompt = str(props.aiPrompt) ?? str(aiObj.prompt);
+  if (aiPrompt) ai.prompt = aiPrompt;
+  const aiPromptWriter = str(props.aiPromptWriter) ?? str(aiObj.promptWriter);
+  if (aiPromptWriter) ai.promptWriter = aiPromptWriter;
+  const aiSystem = str(props.aiSystem) ?? str(aiObj.system);
+  if (aiSystem) ai.system = aiSystem;
+  const aiSystemVersion = str(props.aiSystemVersion) ?? str(aiObj.systemVersion);
+  if (aiSystemVersion) ai.systemVersion = aiSystemVersion;
+  if (Object.keys(ai).length > 0) meta.ai = ai;
+
+  // digitalSourceType: full IRI, or a bare IPTC CV term we expand. The
+  // `aiGenerated` shorthand implies trainedAlgorithmicMedia.
+  const dst = str(props.digitalSourceType);
+  if (dst) {
+    meta.digitalSourceType = dst.includes("://")
+      ? dst
+      : `http://cv.iptc.org/newscodes/digitalsourcetype/${dst}`;
+  } else if (props.aiGenerated === true || str(props.aiGenerated) === "true") {
+    meta.digitalSourceType = DIGITAL_SOURCE_TYPE.trainedAlgorithmicMedia;
   }
 
   return Object.keys(meta).length > 0 ? meta : null;

@@ -110,6 +110,9 @@ Pass extra props on `<Image>` for fuller AEO signals (distinct SEO description, 
 | `copyrightNotice` | `photoshop:Copyright` |
 | `licenseUrl` | `xmpRights:WebStatement` — *Google Licensable* |
 | `licensor` `{url, name?}` (or flat `licensorUrl`/`licensorName`) | IPTC PLUS `plus:Licensor` — *Google "Get this image" link* |
+| `digitalSourceType` (full IRI or bare term like `"trainedAlgorithmicMedia"`) | `Iptc4xmpExt:DigitalSourceType` — *AI-generated disclosure* |
+| `aiGenerated` (boolean shorthand) | sets `Iptc4xmpExt:DigitalSourceType` to `trainedAlgorithmicMedia` |
+| `ai` `{prompt?, promptWriter?, system?, systemVersion?}` (or flat `aiPrompt`/`aiPromptWriter`/`aiSystem`/`aiSystemVersion`) | IPTC 2025.1 `Iptc4xmpExt:AIPromptInformation` / `AIPromptWriterName` / `AISystemUsed` / `AISystemVersionUsed` |
 
 ### Make images Licensable in Google
 
@@ -127,6 +130,31 @@ The last fields implement what [Google Images reads for the **Licensable** badge
 />
 ```
 
+### Label AI-generated images (IPTC 2025.1)
+
+For AI-generated assets, embed the IPTC 2025.1 provenance fields plus the
+Digital Source Type IRI that downstream tools read to label an image as
+AI-generated:
+
+```astro
+<Image
+  src={market}
+  alt="A neon-lit street market at night in the rain"
+  aiGenerated
+  aiPrompt="neon street market, rain reflections, cinematic 35mm"
+  aiPromptWriter="Jane Doe"
+  aiSystem="DALL-E via Bing Image Creator"
+  aiSystemVersion="3"
+  width={1200} height={800}
+/>
+```
+
+`aiGenerated` is shorthand for
+`digitalSourceType="trainedAlgorithmicMedia"`; pass `digitalSourceType`
+explicitly for other terms (e.g. `"compositeSynthetic"` — bare CV terms are
+expanded to the full IPTC IRI). Per IPTC guidance, leave `creator` off for
+fully AI-generated images — the prompt writer is explicitly not the creator.
+
 For TypeScript autocomplete on the custom props, augment Astro's image props in `src/env.d.ts`:
 
 ```ts
@@ -135,6 +163,9 @@ declare namespace Astro {
     description?: string;
     keywords?: string[] | string;
     title?: string;
+    aiGenerated?: boolean;
+    aiPrompt?: string;
+    aiSystem?: string;
   }
 }
 ```
@@ -145,7 +176,7 @@ Whatever you output from Astro: **WebP, AVIF, JPEG, PNG** (via `aeo-image`). SVG
 
 ## Standards
 
-Metadata is written as **Adobe XMP** (not legacy IPTC-IIM), conforming to the [IPTC Photo Metadata Standard 2025.1](https://iptc.org/standards/photo-metadata/iptc-standard/) (descriptive + accessibility + rights/licensing subset) plus Dublin Core, Adobe, and PLUS namespaces — see [`aeo-image`'s conformance notes](https://github.com/vsima/aeo-image#standards--conformance). The 2025.1 AI-generation provenance properties are not yet implemented.
+Metadata is written as **Adobe XMP** (not legacy IPTC-IIM), conforming to the [IPTC Photo Metadata Standard 2025.1](https://iptc.org/standards/photo-metadata/iptc-standard/) (descriptive + accessibility + rights/licensing + AI-provenance subset) plus Dublin Core, Adobe, and PLUS namespaces — see [`aeo-image`'s conformance notes](https://github.com/vsima/aeo-image#standards--conformance). This includes the 2025.1 AI-generation provenance properties and `Iptc4xmpExt:DigitalSourceType` (readable by exiftool, named tags from 13.40).
 
 ## Verifying it worked
 
